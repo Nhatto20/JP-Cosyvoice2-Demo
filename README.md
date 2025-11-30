@@ -6,6 +6,12 @@
 
 This is a Japanese-optimized implementation of CosyVoice2, a state-of-the-art text-to-speech system. This repository provides fine-tuned models and tools specifically designed for Japanese language synthesis with natural prosody and high fidelity.
 
+### Dataset
+
+The model was finetune on the [JVS](https://sites.google.com/site/shinnosuketakamichi/research-topics/jvs_corpus) dataset
+JVS is a high-quality Japanese multi-speaker speech corpus (100 speakers, ~30 hours, 24 kHz).
+Each speaker includes parallel, non-parallel, whisper, and falsetto recordings.
+
 ## ✨ Features
 
 - 🎯 **Zero-shot Voice Cloning**: Clone any voice with just 3-10 seconds of audio
