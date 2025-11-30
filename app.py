@@ -628,7 +628,7 @@ except ImportError:
     print("Warning: Metrics libraries not available. Install: pip install faster-whisper speechbrain jiwer")
 
 # Initialize CosyVoice2 model
-MODEL_DIR = "iic/CosyVoice2-0.5B"
+MODEL_DIR = "./pretrained_models/CosyVoice2-0.5B"
 cosyvoice = CosyVoice2(MODEL_DIR)
 available_spks = cosyvoice.list_available_spks()
 
