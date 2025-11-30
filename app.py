@@ -81,7 +81,7 @@ def save_audio(audio_tensor, sample_rate=22050):
     torchaudio.save(temp_file.name, audio_tensor, sample_rate)
     return temp_file.name
 
-def run_asr(wav_path: str, language: str = "vi") -> str:
+def run_asr(wav_path: str, language: str = "ja") -> str:
     """Run ASR using Faster-Whisper"""
     if ASR_MODEL is None:
         return ""
@@ -117,7 +117,7 @@ def cosine_similarity(a, b):
     b = b.view(-1).unsqueeze(0)
     return torch.nn.functional.cosine_similarity(a, b, dim=1).item()
 
-def calculate_metrics(generated_audio_path: str, reference_text: str, reference_audio_path: Optional[str], language: str = "vi") -> Dict:
+def calculate_metrics(generated_audio_path: str, reference_text: str, reference_audio_path: Optional[str], language: str = "ja") -> Dict:
     """
     Calculate CER, SIM metrics
     
@@ -500,7 +500,7 @@ with gr.Blocks(title="CosyVoice2 TTS", theme=gr.themes.Soft()) as demo:
                     with gr.Accordion("📊 Metrics Settings (Optional)", open=False):
                         sft_enable_metrics = gr.Checkbox(value=False, label="Enable Metrics Calculation")
                         sft_ref_text = gr.Textbox(label="Reference Text (for CER)", placeholder="Ground truth text...")
-                        sft_language = gr.Dropdown(choices=["vi", "en", "zh", "ja", "ko"], value="vi", label="Language for ASR")
+                        sft_language = gr.Dropdown(choices=["ja", "en", "zh", "ko"], value="ja", label="Language for ASR")
                     
                     sft_btn = gr.Button("Generate", variant="primary")
                 
@@ -538,8 +538,8 @@ with gr.Blocks(title="CosyVoice2 TTS", theme=gr.themes.Soft()) as demo:
                         zs_enable_metrics = gr.Checkbox(value=False, label="Enable Metrics (CER + SIM)")
                         zs_ref_text = gr.Textbox(label="Reference Text (for CER)", placeholder="Ground truth text...")
                         zs_language = gr.Dropdown(
-                            choices=["vi", "en", "zh", "ja", "ko"], 
-                            value="vi", 
+                            choices=["ja", "en", "zh", "ko"], 
+                            value="ja", 
                             label="Language (for ASR & Metrics)",
                             info="Used for auto-generating prompt text and CER calculation"
                         )
@@ -574,7 +574,7 @@ with gr.Blocks(title="CosyVoice2 TTS", theme=gr.themes.Soft()) as demo:
                     with gr.Accordion("📊 Metrics Settings (Optional)", open=False):
                         cl_enable_metrics = gr.Checkbox(value=False, label="Enable Metrics (CER + SIM)")
                         cl_ref_text = gr.Textbox(label="Reference Text (for CER)", placeholder="Ground truth text...")
-                        cl_language = gr.Dropdown(choices=["vi", "en", "zh", "ja", "ko"], value="vi", label="Language")
+                        cl_language = gr.Dropdown(choices=["ja", "en", "zh", "ko"], value="ja", label="Language")
                     
                     cl_btn = gr.Button("Generate", variant="primary")
                 
@@ -613,8 +613,8 @@ with gr.Blocks(title="CosyVoice2 TTS", theme=gr.themes.Soft()) as demo:
                         inst_enable_metrics = gr.Checkbox(value=False, label="Enable Metrics (CER + SIM)")
                         inst_ref_text = gr.Textbox(label="Reference Text (for CER)", placeholder="Ground truth text...")
                         inst_language = gr.Dropdown(
-                            choices=["vi", "en", "zh", "ja", "ko"], 
-                            value="vi", 
+                            choices=["ja", "en", "zh", "ko"], 
+                            value="ja", 
                             label="Language (for ASR & Metrics)",
                             info="Used for auto-generating instruction and CER calculation"
                         )
@@ -647,7 +647,7 @@ with gr.Blocks(title="CosyVoice2 TTS", theme=gr.themes.Soft()) as demo:
                     with gr.Accordion("📊 Metrics Settings (Optional)", open=False):
                         vc_enable_metrics = gr.Checkbox(value=False, label="Enable Metrics (CER + SIM)")
                         vc_ref_text = gr.Textbox(label="Reference Text (for CER)", placeholder="Ground truth text...")
-                        vc_language = gr.Dropdown(choices=["vi", "en", "zh", "ja", "ko"], value="vi", label="Language")
+                        vc_language = gr.Dropdown(choices=["ja", "en", "zh", "ko"], value="ja", label="Language")
                     
                     vc_btn = gr.Button("Convert", variant="primary")
                 
@@ -693,7 +693,7 @@ with gr.Blocks(title="CosyVoice2 TTS", theme=gr.themes.Soft()) as demo:
     - Zero-shot: Automatically transcribes prompt audio if prompt text is empty
     - Instruct2: Uses ASR transcript as instruction if instruction text is empty
     - Requires correct language selection in dropdown
-    - Works with: Vietnamese (vi), English (en), Chinese (zh), Japanese (ja), Korean (ko)
+    - Works with: English (en), Chinese (zh), Japanese (ja), Korean (ko)
     """)
 
 if __name__ == "__main__":
