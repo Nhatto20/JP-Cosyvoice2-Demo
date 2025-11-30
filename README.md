@@ -117,7 +117,7 @@ Clone any voice using a short audio sample and its transcript.
 
 ```python
 # Load prompt audio (3-10 seconds recommended)
-prompt_speech_16k = load_wav('./examples/prompt_japanese.wav', 16000)
+prompt_speech_16k = load_wav('./examples_audio/prompt_japanese_male.wav', 16000)
 
 # Generate speech with cloned voice
 for i, j in enumerate(cosyvoice.inference_zero_shot(
@@ -180,11 +180,11 @@ Generate Japanese speech using voice characteristics from audio in any language.
 
 ```python
 # Load prompt audio (can be in any language)
-prompt_speech_16k = load_wav('./examples/english_prompt.wav', 16000) # Replace with actual audio path
+prompt_speech_16k = load_wav('./examples_audio/prompt_japanese_male.wav', 16000) # Replace with actual audio path
 
 # Generate Japanese speech with the voice characteristics
 for i, j in enumerate(cosyvoice.inference_cross_lingual(
-    tts_text='春の訪れとともに、桜の花が満開になりました。',
+    tts_text="Good morning. Let's do our best today.",
     prompt_speech_16k=prompt_speech_16k,
     stream=False
 )):
@@ -209,7 +209,7 @@ Control speaking style using natural language instructions.
 **Example:**
 
 ```python
-prompt_speech_16k = load_wav('./examples/prompt_japanese.wav', 16000)
+prompt_speech_16k = load_wav('./examples_audio/prompt_japanese_male.wav', 16000)
 
 # Generate with style instruction
 for i, j in enumerate(cosyvoice.inference_instruct2(
@@ -251,10 +251,10 @@ Convert the voice in one audio file to sound like another.
 
 ```python
 # Load source audio (voice to convert)
-source_speech_16k = load_wav('./examples/source_voice.wav', 16000)
+source_speech_16k = load_wav('./examples_audio/prompt_japanese_female.wav', 16000)
 
 # Load target audio (desired voice)
-target_speech_16k = load_wav('./examples/target_voice.wav', 16000)
+target_speech_16k = load_wav('./examples_audio/prompt_japanese_male.wav', 16000)
 
 # Perform voice conversion
 for i, j in enumerate(cosyvoice.inference_vc(
@@ -272,7 +272,7 @@ For real-time applications with low latency.
 **Example:**
 
 ```python
-prompt_speech_16k = load_wav('./examples/prompt_japanese.wav', 16000)
+prompt_speech_16k = load_wav('./examples_audio/prompt_japanese_male.wav', 16000)
 
 # Enable streaming mode
 for i, j in enumerate(cosyvoice.inference_zero_shot(
@@ -300,7 +300,7 @@ def text_generator():
     yield '友達と会いました。'
     yield '楽しい時間を過ごしました。'
 
-prompt_speech_16k = load_wav('./examples/prompt_japanese.wav', 16000)
+prompt_speech_16k = load_wav('./examples_audio/prompt_japanese_male.wav', 16000)
 
 for i, j in enumerate(cosyvoice.inference_zero_shot(
     tts_text=text_generator(),  # Use generator as input
