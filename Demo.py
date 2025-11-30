@@ -699,7 +699,6 @@
 # if __name__ == "__main__":
 #     demo.queue()
 #     demo.launch(share=True)
-
 import gradio as gr
 import torch
 import torchaudio
@@ -1005,11 +1004,14 @@ def generate_zero_shot(text, prompt_text, prompt_audio, stream_mode, speed, text
         final_path = save_audio(torch.from_numpy(final_audio).unsqueeze(0), cosyvoice.sample_rate)
         yield (cosyvoice.sample_rate, final_audio), final_path
     
+    # Use tts_text as reference if no ref_text provided
+    final_ref_text = ref_text if (ref_text and ref_text.strip()) else text
+    
     yield from generate_with_metrics(
         _generate,
         stream_mode,
         enable_metrics,
-        ref_text if enable_metrics else "",
+        final_ref_text if enable_metrics else "",
         prompt_audio if enable_metrics else None,
         language,
     )
@@ -1020,68 +1022,78 @@ with gr.Blocks(title="CosyVoice2 Zero-Shot TTS", theme=gr.themes.Soft()) as demo
     # 🎙️ CosyVoice2 Zero-Shot Voice Cloning
     
     Clone any voice with just a short audio sample (3-10 seconds).
+    
+    ⚠️ **Note:** The first inference will take some time to load the model. Subsequent generations will be faster.
     """)
     
     with gr.Row():
         with gr.Column():
+            gr.Markdown("### Input Settings")
+            
             zs_text = gr.Textbox(
                 label="Text to synthesize", 
                 placeholder="Enter the text you want to generate...", 
                 lines=3
             )
             zs_prompt_text = gr.Textbox(
-                label="Prompt text (Optional - Auto ASR if empty)", 
-                placeholder="Leave empty to auto-generate from audio using ASR...", 
-                lines=2,
-                info="Transcript of the prompt audio. Leave empty for automatic transcription."
+                label="Prompt text (optional)", 
+                placeholder="Leave empty for auto-transcription...", 
+                lines=2
             )
             zs_prompt_audio = gr.Audio(
-                label="Prompt audio (3-10 seconds recommended)", 
-                type="filepath",
-                info="Upload a clear audio sample of the voice you want to clone"
+                label="Prompt audio (3-10s)", 
+                type="filepath"
             )
+            
+            gr.Markdown("### Generation Settings")
             
             with gr.Row():
                 zs_stream = gr.Radio(
                     choices=["Streaming", "Non-streaming"], 
                     value="Non-streaming", 
-                    label="Generation Mode",
-                    info="Streaming shows progressive output, Non-streaming waits for completion"
+                    label="Mode"
                 )
                 zs_speed = gr.Slider(
                     minimum=0.5, 
                     maximum=2.0, 
                     value=1.0, 
                     step=0.1, 
-                    label="Speaking Speed"
+                    label="Speed"
                 )
             
             zs_frontend = gr.Checkbox(
                 value=True, 
-                label="Enable text normalization",
-                info="Automatically normalize numbers, dates, etc."
+                label="Enable text normalization"
             )
             
-            with gr.Accordion("📊 Advanced Settings (Optional)", open=False):
+            with gr.Accordion("📊 Advanced Metrics (Optional)", open=False):
+                gr.Markdown("""
+                **Instructions:**
+                - Enable metrics to calculate CER (Character Error Rate) and Speaker Similarity
+                - Reference text is optional - if not provided, will use your input text
+                - Select the correct language for accurate transcription
+                - Note: Enabling metrics will increase processing time
+                """)
+                
                 zs_enable_metrics = gr.Checkbox(
                     value=False, 
-                    label="Enable Quality Metrics (CER + Speaker Similarity)",
-                    info="Requires additional processing time"
+                    label="Enable metrics"
                 )
                 zs_ref_text = gr.Textbox(
-                    label="Reference Text (for CER calculation)", 
-                    placeholder="Ground truth text for accuracy measurement..."
+                    label="Reference text (optional)", 
+                    placeholder="Leave empty to use input text..."
                 )
                 zs_language = gr.Dropdown(
                     choices=["ja", "en", "zh", "ko"], 
                     value="ja", 
-                    label="Language",
-                    info="Used for auto-transcription and metrics calculation"
+                    label="Language"
                 )
             
             zs_btn = gr.Button("🎤 Generate Voice", variant="primary", size="lg")
         
         with gr.Column():
+            gr.Markdown("### Output")
+            
             zs_audio_stream = gr.Audio(
                 label="🔊 Streaming Preview", 
                 autoplay=True,
@@ -1120,42 +1132,6 @@ with gr.Blocks(title="CosyVoice2 Zero-Shot TTS", theme=gr.themes.Soft()) as demo
             zs_metrics
         ]
     )
-    
-    gr.Markdown("""
-    ---
-    ### 📖 How to Use:
-    
-    1. **Enter your text** - Type the text you want the cloned voice to speak
-    2. **Upload prompt audio** - Provide 3-10 seconds of clear audio from the target voice
-    3. **Optional: Add prompt text** - Leave empty for automatic transcription, or provide the transcript manually
-    4. **Adjust settings** - Choose streaming mode, speed, and other options
-    5. **Click Generate** - Wait for your synthesized speech!
-    
-    ### ✨ Features:
-    
-    - 🎯 **Zero-shot Voice Cloning**: Clone any voice with minimal audio
-    - 🎤 **Auto Transcription**: Automatically transcribe prompt audio if transcript not provided
-    - ⚡ **Streaming Mode**: See progressive output as it generates
-    - 🎛️ **Speed Control**: Adjust speaking rate from 0.5x to 2.0x
-    - 📊 **Quality Metrics**: Optional CER and speaker similarity measurements
-    - ⏱️ **Performance Tracking**: Monitor generation time and latency
-    
-    ### 💡 Tips:
-    
-    - Use **clear, noise-free audio** for best results
-    - **3-10 seconds** is the optimal prompt audio length
-    - Leave prompt text **empty** to use automatic transcription
-    - Select the **correct language** for accurate transcription
-    - Enable **streaming mode** for faster feedback
-    - Use **metrics** to evaluate output quality (adds processing time)
-    
-    ### 🌍 Supported Languages:
-    
-    - 🇯🇵 Japanese (ja)
-    - 🇬🇧 English (en)
-    - 🇨🇳 Chinese (zh)
-    - 🇰🇷 Korean (ko)
-    """)
 
 if __name__ == "__main__":
     demo.queue()
